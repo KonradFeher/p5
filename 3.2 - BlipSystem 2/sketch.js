@@ -191,8 +191,8 @@ function draw() {
             random(0, width),
             random(0, height),
             randomGaussian(20, 10),
-            randomGaussian(0, 1),
-            randomGaussian(0, 1),
+            randomGaussian(0, 0.5),
+            randomGaussian(0, 0.5),
             );
 
     if(mouseIsPressed){
