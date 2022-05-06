@@ -77,7 +77,7 @@ class Blip{
             this.framesAlive++;
             if(this.framesAlive < 100)
                 this.color = lerpColor(color("#000"), color('#072227'), this.framesAlive / 100);
-            else this.color = lerpColor(color("#072227"), color('white'), (this.framesAlive - 100) / 9900.0);
+            else if(!this.inOrbit) this.color = lerpColor(color("#072227"), color('white'), (this.framesAlive - 100) / 9900.0);
         }
 
         // if(this.brightness <= 0 || this.x <= 0 || this.y <= 0 || this.x >= width || this.y >= height)
