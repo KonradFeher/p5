@@ -10,10 +10,10 @@ const ACCELERAION_DECAY = 0.9;                  //1 - no decay, 0 - no accelerat
 const STAR_SIZE = 100;
 const STAR_DENSITY = 2;
 
-const MAX_BLIPS = 100;
-const MAX_ORBITS = 100;                    
-const ORBIT_LENGTH = 200;                    
-const ORBIT_FRAMES = 20; 
+const MAX_BLIPS = 50
+const MAX_ORBITS = 50                    
+const ORBIT_LENGTH = 50                    
+const ORBIT_FRAMES = 60 
 
 function setup() {
     createCanvas(displayWidth, displayHeight);
