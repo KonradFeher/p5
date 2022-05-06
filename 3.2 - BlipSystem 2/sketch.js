@@ -102,7 +102,7 @@ class Blip{
             push();
                 noStroke();
                 for (var i = 0; i < this.orbit.length; i++) {
-                    fill(this.color, map(i, 0, this.orbit.length, 0, 255));
+                    fill(red(this.color), green(this.color), blue(this.color), map(i, 0, this.orbit.length, 0, 255));
                     circle(this.orbit[i].x, this.orbit[i].y, 3);
                 }
             fill(this.color);
