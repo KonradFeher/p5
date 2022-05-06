@@ -75,9 +75,13 @@ class Blip{
         if(!this.central) {
             this.brightness -= BRIGHTNESS_DECAY;
             this.framesAlive++;
-            if(this.framesAlive < 100)
-                this.color = lerpColor(color("#000"), color('#072227'), this.framesAlive / 100);
-            else if(!this.inOrbit) this.color = lerpColor(color("#072227"), color('white'), (this.framesAlive - 100) / 9900.0);
+ 
+            if(!this.inOrbit){
+                if(this.framesAlive < 100)
+                    this.color = lerpColor(color("#000"), color('#072227'), this.framesAlive / 100);
+                else 
+                    this.color = lerpColor(color("#072227"), color('white'), (this.framesAlive - 100) / 9900.0);
+            }
         }
 
         // if(this.brightness <= 0 || this.x <= 0 || this.y <= 0 || this.x >= width || this.y >= height)
@@ -101,6 +105,7 @@ class Blip{
                     fill(this.color, map(i, 0, this.orbit.length, 0, 255));
                     circle(this.orbit[i].x, this.orbit[i].y, 3);
                 }
+            fill(this.color);
             circle(this.x, this.y, this.size);
             pop();
         } else{
