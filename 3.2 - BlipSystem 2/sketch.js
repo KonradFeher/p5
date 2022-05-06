@@ -21,13 +21,13 @@ function setup() {
     frameRate(60);
     blipSystem = new BlipSystem();
 
-    // blipSystem.addCentral(width / 2, height / 2, STAR_SIZE);
+    blipSystem.addCentral(width / 2, height / 2, STAR_SIZE);
 
     // blipSystem.addCentral(width * (2/7), height * (2/7), STAR_SIZE);
     // blipSystem.addCentral(width * (5/7), height * (5/7), STAR_SIZE);
     
-    blipSystem.addCentral(width * (1/3), height * (1/3), STAR_SIZE);
-    blipSystem.addCentral(width * (2/3), height * (2/3), STAR_SIZE);
+    // blipSystem.addCentral(width * (1/3), height * (1/3), STAR_SIZE);
+    // blipSystem.addCentral(width * (2/3), height * (2/3), STAR_SIZE);
 
     mousePositions = [];
 }
@@ -98,7 +98,7 @@ class Blip{
             push();
                 noStroke();
                 for (var i = 0; i < this.orbit.length; i++) {
-                    fill(this.orbitColor, map(i, 0, this.orbit.length, 0, 255));
+                    fill(this.color, map(i, 0, this.orbit.length, 0, 255));
                     circle(this.orbit[i].x, this.orbit[i].y, 3);
                 }
             circle(this.x, this.y, this.size);
@@ -150,10 +150,9 @@ class BlipSystem{
             this.blips[i].update();
             if(this.blips[i].framesAlive == 10000 && this.blipsInOrbit < MAX_ORBITS){
                 this.blips[i].inOrbit = true;
-                // this.blips[i].orbitColor = lerpColor(color('orange'), color('purple'), random(0, 1.0));
                 push();
                     colorMode(HSB);
-                    this.blips[i].orbitColor = color(random(0,255), 100, 100);
+                    this.blips[i].color = color(random(0,255), 100, 100);
                     colorMode(RGB);
                 pop();
                 this.blipsInOrbit++;
