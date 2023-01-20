@@ -1,21 +1,36 @@
 let noiseZ = 0;
 
+//recalculates color limits on each frame, resulting in more rapidly changing, untrue noise
+let use_relative_noise_cb;
 let use_relative_noise = false;
 
 let step_slider;
 let time_step_slider;
+let chroma_slider;
+
 // ".005 - 0.03 works best"
-let step = 0.02;
-let time_step = 0.02;
+let min_step = 0.001
+let step = 0.02
+let max_step = 0.1
+
+let min_time_step = 0
+let time_step = 0.005
+let max_time_step = 0.02
 
 let canvas_size = 900
-const mesh_size = 40
+const mesh_size = 50
 let square_size;
 
-let colors = [0, 255]
+let colors
+// colors = ["yellow", "orchid"]
+colors = ["ivory", "ivory", "black", "ivory", "ivory"]
+
+// 0 -> continuous colors, n -> n colors
+let n_chromatic = 0
+let max_chromatics = 30
 
 function setup() {
-    
+
     square_size = floor(canvas_size / mesh_size)
     canvas_size = square_size * mesh_size
 
@@ -23,36 +38,58 @@ function setup() {
     noFill()
     noStroke()
 
-    step_slider = createSlider(0.001, 0.1, step, 0);
+    use_relative_noise_cb = createCheckbox('', false);
+    use_relative_noise_cb.changed(() => { use_relative_noise = !use_relative_noise });
+    use_relative_noise_cb.style('width', '10px');
+    use_relative_noise_cb.style('height', '10px');
+    use_relative_noise_cb.position(canvas_size - 20, canvas_size - 20)
+
+    step_slider = createSlider(min_step, max_step, step, 0);
     step_slider.position(10, 10);
     step_slider.style('width', '100px');
 
-    time_step_slider = createSlider(0, 0.05, time_step, 0);
-    time_step_slider.position(width - 110, 10);
+    time_step_slider = createSlider(min_time_step, max_time_step, time_step, 0);
+    time_step_slider.position(canvas_size - 110, 10);
     time_step_slider.style('width', '100px');
+
+    chroma_slider = createSlider(0, max_chromatics, n_chromatic, 1);
+    chroma_slider.position(10, canvas_size - 10 - chroma_slider.size().height);
+    chroma_slider.style('width', '100px');
+
 }
 
 function draw() {
 
+    background(colors[1])
+
+    //get values from sliders
     step = step_slider.value()
     noiseZ += time_step_slider.value()
+    n_chromatic = chroma_slider.value()
 
-    let max_noise = 0;
-    let min_noise = 1;
+    let max_noise = 1;
+    let min_noise = 0;
 
     if (use_relative_noise) {
+        max_noise = 0;
+        min_noise = 1;
         for (let i = 0; i < mesh_size; i++) {
             for (let j = 0; j < mesh_size; j++) {
                 max_noise = max(timeNoise(i, j), max_noise)
                 min_noise = min(timeNoise(i, j), min_noise)
             }
         }
+        //edge cases aren't checked while lerping 
         max_noise *= 1.001
         min_noise *= 0.999
     }
+
     for (let i = 0; i < mesh_size; i++) {
         for (let j = 0; j < mesh_size; j++) {
-            let colorMap = map(timeNoise(i, j), min_noise, max_noise, 0, colors.length-1)
+            let colorMap
+            if (n_chromatic == 0)
+                colorMap = map(timeNoise(i, j), min_noise, max_noise, 0, colors.length - 1)
+            else colorMap = map(round(map(timeNoise(i, j), min_noise, max_noise, -0.5, n_chromatic - 0.5)), 0, n_chromatic, 0, colors.length - 1)
 
             let fromColor = color(colors[floor(colorMap)])
             let toColor = color(colors[floor(colorMap + 1)])
@@ -60,7 +97,7 @@ function draw() {
             let fillColor = lerpColor(fromColor, toColor, colorMap % 1)
 
             fill(fillColor)
-            square(square_size*i, square_size*j, square_size)
+            square(square_size * i, square_size * j, square_size, 2)
         }
     }
 
