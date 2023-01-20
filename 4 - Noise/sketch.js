@@ -27,15 +27,13 @@ let n_chromatic = 0
 let max_chromatics = 30
 
 function setup() {
+    noSmooth()
 
     square_size = floor(canvas_size / mesh_size)
     canvas_size = square_size * mesh_size
 
-    // colors = ["yellow", "orchid"]
     colors = parseColors("yellow", "orchid")
-    // colors = parseColors(1, "yellow", 1, "orchid")
-    // colors = ["ivory", "ivory", "black", "ivory", "ivory"]
-    // colors = parseColors(2, "ivory", "black", 2, "ivory")
+    // colors = parseColors(2, "ivory", "black", 2, "white")
 
     createCanvas(canvas_size, canvas_size)
     noFill()
@@ -93,8 +91,8 @@ function draw() {
     if (use_relative_noise) {
         max_noise = 0;
         min_noise = 1;
-        for (let i = 0; i < mesh_size; i++) {
-            for (let j = 0; j < mesh_size; j++) {
+        for (let i = - mesh_size / 2; i < mesh_size / 2; i++) {
+            for (let j = - mesh_size / 2; j < mesh_size / 2; j++) {
                 max_noise = max(timeNoise(i, j), max_noise)
                 min_noise = min(timeNoise(i, j), min_noise)
             }
@@ -104,20 +102,19 @@ function draw() {
         min_noise *= 0.999
     }
 
-    for (let i = 0; i < mesh_size; i++) {
-        for (let j = 0; j < mesh_size; j++) {
+    for (let i = -mesh_size / 2; i < mesh_size / 2; i++) {
+        for (let j = -mesh_size / 2; j < mesh_size / 2; j++) {
             let colorMap
-            if (n_chromatic == 0)
-                colorMap = map(timeNoise(i, j), min_noise, max_noise, 0, colors.length - 1)
-            else colorMap = map(round(map(timeNoise(i, j), min_noise, max_noise, -0.5, n_chromatic - 0.5)), 0, n_chromatic, 0, colors.length - 1)
+            if (n_chromatic == 0) colorMap = map(timeNoise(i, j), min_noise, max_noise, 0, colors.length - 1)
+            else colorMap = map(floor(map(timeNoise(i, j), min_noise, max_noise, 0, n_chromatic + 1)), 0, n_chromatic, 0, colors.length - 1, true)
 
-            let fromColor = color(colors[floor(colorMap)])
-            let toColor = color(colors[floor(colorMap + 1)])
+            let fromColor = colors[floor(colorMap)]
+            let toColor = colors[floor(colorMap + 1)]
 
-            let fillColor = lerpColor(fromColor, toColor, colorMap % 1)
+            let fillColor = lerpColor(fromColor ?? colors[0], toColor ?? colors[colors.length - 1], colorMap % 1)
 
             fill(fillColor)
-            square(square_size * i, square_size * j, square_size, 2)
+            square(square_size * (i + mesh_size / 2), square_size * (j + mesh_size / 2), square_size, 2)
         }
     }
 
@@ -125,5 +122,5 @@ function draw() {
 
 
 function timeNoise(x, y) {
-    return noise(x * step, y * step, noiseZ)
+    return noise((mesh_size / 2) * max_step + step * x, (mesh_size / 2) * max_step + step * y, noiseZ)
 }
