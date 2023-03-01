@@ -1,15 +1,16 @@
+
 let re_from = -1.8
 let re_to = 0.8
 
 let im_from = -1.3
 let im_to = 1.3
 
-let image_size = 333
-let canvas_size = 999
+let image_size = 250
+let canvas_size = 500
 let r = (canvas_size / image_size)
 
 // let min_iter_limit = 5
-let iter_limit = 50
+let iter_limit = 20
 // let max_iter_limit = 100
 
 let use_big_squares = true;
@@ -18,6 +19,8 @@ let recentImages = []
 
 // redraw selection box every x frames
 const REFRESH_BOX_FRAMES = 5
+
+const RENORMALIZE_COLORS = true
 
 // let imagecount;
 
@@ -38,6 +41,9 @@ function setup() {
 */
     
     createCanvas(canvas_size, canvas_size);
+
+    document.querySelector("body").setAttribute("style", "height: 100vh" )
+    document.querySelector("#defaultCanvas0").setAttribute("style", "margin: auto auto" )
     genMandelbrot();
 }
 
@@ -134,6 +140,24 @@ function drawRecentMandelbrot() {
 }
 
 function drawMandelbrot(mandelbrotColors) {
+
+    if (RENORMALIZE_COLORS){
+        let curr_min_i = iter_limit;
+        let curr_max_i = 0;
+        for (let re = 0; re < mandelbrotColors.length; re++) {
+            for (let im = 0; im < mandelbrotColors[0].length; im++) {
+                curr_min_i = min(curr_min_i, mandelbrotColors[re][im])
+                curr_max_i = max(curr_max_i, mandelbrotColors[re][im])
+            }
+        }
+        //remap to 0-100
+        for (let re = 0; re < mandelbrotColors.length; re++) {
+            for (let im = 0; im < mandelbrotColors[0].length; im++) {
+                mandelbrotColors[re][im] = map(mandelbrotColors[re][im], curr_min_i, curr_max_i, 0, iter_limit)
+            }
+        }
+    }
+    
     background(0)
     noStroke()
     colorMode(HSB, 100)
@@ -152,5 +176,3 @@ function drawMandelbrot(mandelbrotColors) {
 
     recentImages.push(get())
 }
-
-//IDEA renormalize HSV colors as the zoom gets deeper  
