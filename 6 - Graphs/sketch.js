@@ -1,6 +1,9 @@
 const NODE_AMOUNT = 24;
-const CANVAS_SIZE = 5000;
+const CANVAS_SIZE = window.innerWidth;
 const RADIUS = 2/5 * CANVAS_SIZE;
+
+const RPM = 1;
+
 
 let adjacency_matrix = [];
 
@@ -9,6 +12,7 @@ function setup() {
     background("#EEE");
     fill("#111");
     stroke("#111");
+    frameRate(60);
 
 
     adjacency_matrix = const_matrix(NODE_AMOUNT, 1);
@@ -18,7 +22,8 @@ function setup() {
 
 function draw() {
     translate(width / 2, height / 2);
-    rotate(frameCount * .001)
+    
+    rotate(RPM * (TWO_PI*frameCount/3600))
 
     background("#EEE8");
     
@@ -64,3 +69,7 @@ function draw_round_graph(adjacency_matrix=[], radius=RADIUS){
     }
 
 }
+
+//TODO: stroke color/width change with element value
+//      different matrix patterns
+//      interactivity?
