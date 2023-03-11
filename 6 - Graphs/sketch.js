@@ -1,23 +1,26 @@
-const CANVAS_SIZE = window.innerWidth;
+const CANVAS_SIZE = Math.min(window.innerWidth, window.innerHeight);
 
 // number of nodes in the graph
-const NODE_AMOUNT = 30;
+let NODE_AMOUNT = 24;
 // maximum distance from the origin point
-const MAX_RADIUS = 2 / 5 * CANVAS_SIZE;
+let MAX_RADIUS = 2 / 5 * CANVAS_SIZE;
 
 // number of different distances from the origin
-const LEVELS = 5;
+let LEVELS = 6;
 // allows each node to be spread out, over multiple levels
-const MULTI_LEVEL = false;                   
+let MULTI_LEVEL = false;                   
 // mirrors the shuriken pattern of levels into a flower pattern
-const MIRROR_LEVELS = true;
+let MIRROR_LEVELS = false;
 // minimal distance of the lowest level from the origin point 
-const MIN_RADIUS = MAX_RADIUS * .2;
-
+let MIN_RADIUS = MAX_RADIUS * .7;
 
 // rotations per minute
-const RPM = 1;
+let RPM = 1;
 
+// sliders
+let node_slider;
+let min_radius_slider;
+let levels_slider;
 
 let adjacency_matrix = [];
 
@@ -29,8 +32,39 @@ function setup() {
     stroke("#111");
     frameRate(60);
 
-    // adjacency_matrix = const_matrix(NODE_AMOUNT, 1);
-    adjacency_matrix = dist_matrix(NODE_AMOUNT, 4, 5);
+    // SLIDER SETUP
+
+    node_slider = createSlider(1, 50, NODE_AMOUNT, 1);
+    node_slider.position(10, 10);
+    node_slider.style('width', '200px');
+
+    min_radius_slider = createSlider(-1, 1, .7, 0);
+    min_radius_slider.position(CANVAS_SIZE - 210, 10);
+    min_radius_slider.style('width', '200px');
+
+    levels_slider = createSlider(1, 50, LEVELS, 1);
+    levels_slider.position(10, CANVAS_SIZE - 10 - levels_slider.size().height);
+    levels_slider.style('width', '200px');
+
+    // CHECKBOX SETUP
+
+    mirror_cb = createCheckbox('', false);
+    mirror_cb.changed(() => { MIRROR_LEVELS = !MIRROR_LEVELS });
+    mirror_cb.style('width', '10px');
+    mirror_cb.style('height', '10px');
+    mirror_cb.position(CANVAS_SIZE - 20, CANVAS_SIZE - 20);
+
+}
+
+function draw() {
+
+    // update values from sliders
+    NODE_AMOUNT = node_slider.value();
+    MIN_RADIUS = min_radius_slider.value() * MAX_RADIUS;
+    LEVELS = int(map(levels_slider.value(), 1, 50, 1, NODE_AMOUNT, true));
+
+    adjacency_matrix = const_matrix(NODE_AMOUNT, 1);
+    // adjacency_matrix = dist_matrix(NODE_AMOUNT, 5, 10);
 
     // for (let i = 0; i < NODE_AMOUNT; i++) {
     //     adjacency_matrix.push([]);
@@ -38,12 +72,6 @@ function setup() {
     //         adjacency_matrix[i].push(node_dist(i, j) % 5 == 1 ? 1:0);
     //     }
     // }
-
-    console.log(adjacency_matrix);
-
-}
-
-function draw() {
 
     translate(width / 2, height / 2);
 
@@ -72,8 +100,10 @@ function const_matrix(size, value = 0) {
     return ret;
 }
 
+// TODO: change min and max-dist into a string parser 
 // returns a regular matrix of given size, connecting nodes based on min_dist and max_dist given
-function dist_matrix(size = NODE_AMOUNT, min_dist = 0, max_dist = NODE_AMOUNT, value = 1) {
+function dist_matrix(size = NODE_AMOUNT, min_dist = 0, max_dist = min_dist, value = 1) {
+    if (max_dist === 0) max_dist = size;
     let ret = [];
     for (let i = 0; i < size; i++) {
         ret.push([]);
@@ -123,5 +153,4 @@ function draw_round_graph(adjacency_matrix = [], levels = LEVELS) {
 //TODO: stroke color/width change with element value
 //      different matrix patterns . . .
 //      interactivity?
-
-// HYUGE TODO: SLIDERS!!!
+//      sine and cosine leveling 
