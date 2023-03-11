@@ -1,12 +1,21 @@
-const NODE_AMOUNT = 30;
 const CANVAS_SIZE = window.innerWidth;
+
+// number of nodes in the graph
+const NODE_AMOUNT = 30;
+// maximum distance from the origin point
 const MAX_RADIUS = 2 / 5 * CANVAS_SIZE;
 
-const LEVELS = 10;
-const MULTI_LEVEL = false;                   //false by default
+// number of different distances from the origin
+const LEVELS = 5;
+// allows each node to be spread out, over multiple levels
+const MULTI_LEVEL = false;                   
+// mirrors the shuriken pattern of levels into a flower pattern
 const MIRROR_LEVELS = true;
-const MIN_RADIUS = MAX_RADIUS * .9;
+// minimal distance of the lowest level from the origin point 
+const MIN_RADIUS = MAX_RADIUS * .2;
 
+
+// rotations per minute
 const RPM = 1;
 
 
@@ -31,7 +40,6 @@ function setup() {
     // }
 
     console.log(adjacency_matrix);
-
 
 }
 
@@ -88,7 +96,7 @@ function connect_angles(angle1, angle2, radius1 = MAX_RADIUS, radius2 = radius1)
     line(cos(angle1) * radius1, - sin(angle1) * radius1, cos(angle2) * radius2, - sin(angle2) * radius2);
 }
 
-// TODO 
+// draws the graph defined by adjacency_matrix on given amount of levels
 function draw_round_graph(adjacency_matrix = [], levels = LEVELS) {
 
     for (let i = 1; i <= adjacency_matrix.length; i++) {
